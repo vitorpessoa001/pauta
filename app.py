@@ -1,20 +1,13 @@
 import streamlit as st
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# 🛠 Configuração do WebDriver para rodar no Streamlit Cloud (Modo Headless)
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # Rodar sem interface gráfica
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-
+# 🛠 Configuração do WebDriver sem precisar baixar manualmente o ChromeDriver
 def iniciar_driver():
-    return webdriver.Chrome(options=chrome_options)
+    return uc.Chrome(headless=True)  # Rodar sem interface gráfica
 
 # 📌 Função para buscar a Sessão Deliberativa do dia
 def buscar_sessao_deliberativa(data_final_formatada):
@@ -41,43 +34,6 @@ def buscar_sessao_deliberativa(data_final_formatada):
         driver.quit()
         return None
 
-# 📌 Função para acessar a sessão e buscar propostas
-def acessar_sessao_e_abrir_propostas(sessao_url):
-    driver = iniciar_driver()
-    driver.get(sessao_url)
-    time.sleep(3)
-
-    propostas = {"analisadas": [], "nao_analisadas": []}
-
-    try:
-        propostas_analisadas = driver.find_elements(By.XPATH, '//*[@id="bloco-ja-analisados"]/ul/li')
-
-        if propostas_analisadas:
-            for proposta in propostas_analisadas:
-                texto = proposta.text.strip().replace("PASSO A PASSO", "").replace("abrir", "").strip()
-                try:
-                    link = proposta.find_element(By.TAG_NAME, "a").get_attribute("href")
-                except:
-                    link = "#"
-                propostas["analisadas"].append((texto, link))
-
-        propostas_nao_analisadas = driver.find_elements(By.XPATH, '//*[@id="bloco-por-analisar"]/ul/li')
-
-        if propostas_nao_analisadas:
-            for proposta in propostas_nao_analisadas:
-                texto = proposta.text.strip().replace("PASSO A PASSO", "").replace("abrir", "").strip()
-                try:
-                    link = proposta.find_element(By.TAG_NAME, "a").get_attribute("href")
-                except:
-                    link = "#"
-                propostas["nao_analisadas"].append((texto, link))
-
-    except:
-        pass
-
-    driver.quit()
-    return propostas
-
 # 🎨 Estilização da Página
 st.set_page_config(page_title="Consulta de Pautas da Câmara", layout="wide")
 st.title("🗳️ Consulta de Pautas da Câmara dos Deputados 🇧🇷")
@@ -98,23 +54,5 @@ if st.button("🔍 Buscar Pauta"):
         
         if sessao_url:
             st.success(f"✅ Sessão encontrada: [{sessao_url}]({sessao_url})")
-            propostas = acessar_sessao_e_abrir_propostas(sessao_url)
-
-            if propostas:
-                # 📜 Mostrar Propostas Analisadas
-                st.subheader("📜 Propostas Analisadas")
-                if propostas["analisadas"]:
-                    for proposta, link in propostas["analisadas"]:
-                        st.markdown(f"- [{proposta}]({link})")
-                else:
-                    st.warning("⚠️ Nenhuma proposta analisada encontrada.")
-
-                # ⚠️ Mostrar Propostas Não Analisadas
-                st.subheader("⚠️ Propostas Não Analisadas")
-                if propostas["nao_analisadas"]:
-                    for proposta, link in propostas["nao_analisadas"]:
-                        st.markdown(f"- [{proposta}]({link})")
-                else:
-                    st.success("✅ Todas as propostas foram analisadas!")
         else:
             st.error("⚠️ Nenhuma Sessão Deliberativa encontrada para essa data.")
