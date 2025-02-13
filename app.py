@@ -7,16 +7,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# 🛠 Configuração do WebDriver
-chrome_driver_path = r"C:\webcrawler\chromedriver-win64\chromedriver.exe"
-options = Options()
-options.add_experimental_option("excludeSwitches", ["enable-automation"])
-options.add_experimental_option("useAutomationExtension", False)
-service = Service(executable_path=chrome_driver_path)
+# 🛠 Configuração do WebDriver para rodar no Streamlit Cloud (Modo Headless)
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # Rodar sem interface gráfica
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+def iniciar_driver():
+    return webdriver.Chrome(options=chrome_options)
 
 # 📌 Função para buscar a Sessão Deliberativa do dia
 def buscar_sessao_deliberativa(data_final_formatada):
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = iniciar_driver()
     url_agenda = f"https://www.camara.leg.br/agenda?dataInicial={data_final_formatada}&dataFinal={data_final_formatada}&categorias=Plen%C3%A1rio"
     driver.get(url_agenda)
     time.sleep(3)
@@ -41,42 +43,9 @@ def buscar_sessao_deliberativa(data_final_formatada):
 
 # 📌 Função para acessar a sessão e buscar propostas
 def acessar_sessao_e_abrir_propostas(sessao_url):
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = iniciar_driver()
     driver.get(sessao_url)
     time.sleep(3)
-
-    print("🔎 Rolando até a seção de Propostas...")
-
-    try:
-        for _ in range(15):  
-            driver.execute_script("window.scrollBy(0, 200);")
-            time.sleep(0.3)
-
-        # 📌 Clicar nos botões "abrir"
-        try:
-            botao_analisadas = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, '//*[@id="main-content"]/section[2]/div/div[1]/button/span'))
-            )
-            driver.execute_script("arguments[0].scrollIntoView();", botao_analisadas)
-            botao_analisadas.click()
-            time.sleep(3)
-
-        except:
-            pass
-
-        try:
-            botao_nao_analisadas = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, '//*[@id="main-content"]/section[3]/div/div[1]/button/span'))
-            )
-            driver.execute_script("arguments[0].scrollIntoView();", botao_nao_analisadas)
-            botao_nao_analisadas.click()
-            time.sleep(3)
-
-        except:
-            pass
-
-    except:
-        pass
 
     propostas = {"analisadas": [], "nao_analisadas": []}
 
