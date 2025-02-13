@@ -1,5 +1,11 @@
 import streamlit as st
-import undetected_chromedriver as uc
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # Rodar sem interface gráfica
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -7,7 +13,7 @@ import time
 
 # 🛠 Configuração do WebDriver sem precisar baixar manualmente o ChromeDriver
 def iniciar_driver():
-    return uc.Chrome(headless=True)  # Rodar sem interface gráfica
+    return webdriver.Chrome(options=chrome_options)
 
 # 📌 Função para buscar a Sessão Deliberativa do dia
 def buscar_sessao_deliberativa(data_final_formatada):
