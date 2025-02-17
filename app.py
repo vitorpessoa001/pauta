@@ -8,13 +8,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# 🛠 Configuração do WebDriver (Baixa o ChromeDriver automaticamente)
+# 🛠 Configuração do WebDriver (Forçando execução headless)
 def iniciar_driver():
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Executa sem interface gráfica
     chrome_options.add_argument("--no-sandbox")  # Necessário para rodar no Streamlit Cloud
     chrome_options.add_argument("--disable-dev-shm-usage")  # Evita problemas de memória
-
+    chrome_options.add_argument("--disable-gpu")  # Desativa aceleração por GPU
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Evita erro de depuração
+    chrome_options.add_argument("--disable-software-rasterizer")  # Evita erro de renderização
+    
     service = Service(ChromeDriverManager().install())  # Baixa o WebDriver automaticamente
     return webdriver.Chrome(service=service, options=chrome_options)
 
