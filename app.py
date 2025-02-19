@@ -13,7 +13,7 @@ options = Options()
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option("useAutomationExtension", False)
 service = Service(executable_path=chrome_driver_path)
-service = Service(executable_path="./chromedriver.exe"
+service = Service(executable_path="./chromedriver.exe")
 
 # 📌 Função para buscar a Sessão Deliberativa do dia
 @st.cache_data  # Cache para evitar buscas repetidas
