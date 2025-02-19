@@ -8,6 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
+
+
 # 🛠 Configuração do WebDriver
 options = Options()
 options.add_argument('--no-sandbox')
@@ -16,7 +18,8 @@ options.add_argument('--disable-dev-shm-usage')
 #options.add_experimental_option("useAutomationExtension", False)
 
 # Get the SELENIUM_URL environment variable
-selenium_url = os.environ.get("SELENIUM_URL")
+selenium_url = "http://localhost:4444/wd/hub"  # Or your actual Selenium server address
+#selenium_url = os.environ.get("SELENIUM_URL")
 st.write(f"Selenium URL: {selenium_url}")
 
 # Initialize the remote WebDriver
