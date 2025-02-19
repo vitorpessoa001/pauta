@@ -8,12 +8,17 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # 🛠 Configuração do WebDriver (movido para fora das funções para melhor performance)
-# chrome_driver_path = r"C:\webcrawler\chromedriver-win64\chromedriver.exe"  # Ajuste o caminho se necessário
 options = Options()
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option("useAutomationExtension", False)
-service = Service(executable_path=chrome_driver_path)
-service = Service(executable_path="./chromedriver.exe")
+
+#  Update Service initialization:
+service = Service(executable_path="./chromedriver")  # For Linux/macOS
+# or
+# service = Service(executable_path="./chromedriver.exe")  # For Windows
+
 
 # 📌 Função para buscar a Sessão Deliberativa do dia
 @st.cache_data  # Cache para evitar buscas repetidas
