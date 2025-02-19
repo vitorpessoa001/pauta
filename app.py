@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -7,18 +8,21 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# 🛠 Configuração do WebDriver (movido para fora das funções para melhor performance)
+# 🛠 Configuração do WebDriver
 options = Options()
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option("useAutomationExtension", False)
 
-#  Update Service initialization:
-service = Service(executable_path="./chromedriver")  # For Linux/macOS
-# or
-# service = Service(executable_path="./chromedriver.exe")  # For Windows
+# Get the SELENIUM_URL environment variable
+selenium_url = os.environ.get("SELENIUM_URL")
 
+# Initialize the remote WebDriver
+driver = webdriver.Remote(
+    command_executor=selenium_url,
+    options=options
+)
 
 # 📌 Função para buscar a Sessão Deliberativa do dia
 @st.cache_data  # Cache para evitar buscas repetidas
