@@ -17,6 +17,7 @@ options.add_argument('--disable-dev-shm-usage')
 
 # Get the SELENIUM_URL environment variable
 selenium_url = os.environ.get("SELENIUM_URL")
+st.write(f"Selenium URL: {selenium_url}")
 
 # Initialize the remote WebDriver
 driver = webdriver.Remote(
