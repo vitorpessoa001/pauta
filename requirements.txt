@@ -1,2 +1,2 @@
-pytz
-requests
+pytz==2024.1
+requests==2.32.3
