@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: pauta-camara
+    runtime: python
+    region: oregon          # ou outra região
+    plan: free              # mude conforme necessário
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --threads 4 --timeout 120 --keep-alive 5
+    envVars:
+      - key: FLASK_DEBUG
+        value: "false"
+      - key: PORT
+        value: "5000"
